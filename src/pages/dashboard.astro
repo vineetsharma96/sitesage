@@ -19,6 +19,10 @@ import { WORKERS } from '../data/mockData';
 >
 
 <!-- ── OPERATIONAL STATUS STRIP ───────────────────────── -->
+<div class="workspace-intro">
+  <div><h1 class="page-title">A clearer view. <em>A safer site.</em></h1><p class="page-subtitle">Your camera feeds, safety events and response workflow in one place. Simulated prototype data.</p></div>
+  <a href="/research" class="btn btn-ghost">Safety research ↗</a>
+</div>
 <div class="ops-status-strip" role="status" aria-label="Site operational status">
   <div class="ops-status-item">
     <span class="status-dot safe" aria-hidden="true"></span>
@@ -550,7 +554,7 @@ import { WORKERS } from '../data/mockData';
     </div>
 
     <!-- ── HUMAN FIELD COMMUNICATIONS & DAILY SAFETY TALK ── -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+    <div class="field-tools">
       <RadioIntercomWidget />
       <ToolboxBriefingCard />
     </div>
@@ -705,7 +709,11 @@ import { WORKERS } from '../data/mockData';
     flex-direction: column;
     gap: 16px;
     min-height: 0;
+    min-width: 0;
   }
+  .field-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .field-tools > :global(*) { min-width: 0; }
+  @media (max-width: 1200px) { .field-tools { grid-template-columns: minmax(0, 1fr); } }
   #alert-rail {
     grid-area: right;
     height: calc(100vh - var(--header-height) - 24px * 2 - 54px - 16px);
@@ -755,6 +763,7 @@ import { WORKERS } from '../data/mockData';
 </style>
 
 <script>
+  import { requestIncidentContext } from '../lib/incident-context-client';
   // ── View toggle (single / grid) ────────────────────────
   const singleView   = document.getElementById('single-view')!;
   const gridView     = document.getElementById('grid-view')!;
@@ -866,6 +875,11 @@ import { WORKERS } from '../data/mockData';
 
     // Insert at top of feed
     alertFeedEl.insertBefore(el, alertFeedEl.firstChild);
+    // Emit the alert first. Context failure must never delay its delivery.
+    void requestIncidentContext(event).then(context => {
+      el.dataset.contextStatus = context.status;
+      el.title = `TinyFish context: ${context.status}. Open to review sources.`;
+    }).catch(() => { el.dataset.contextStatus = 'unavailable'; });
 
     // Remove oldest if too many
     const allItems = alertFeedEl.querySelectorAll('.alert-item');

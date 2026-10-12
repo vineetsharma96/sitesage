@@ -1,0 +1,25 @@
+<section id="incident-context-panel" class="context-panel" hidden aria-labelledby="context-heading" aria-busy="false">
+  <div class="context-heading"><h3 id="context-heading">TinyFish / incident context</h3><span id="context-status" role="status" aria-live="polite"></span></div>
+  <p id="context-meta" class="context-meta"></p>
+  <div class="context-priority"><strong id="context-severity"></strong><p id="context-reason"></p><button id="context-accept" class="btn btn-ghost" hidden>Confirm advisory applies & accept escalation</button></div>
+  <h4>Weather & advisories</h4><p id="context-weather-note"></p><div id="context-weather"></div>
+  <h4>Safety rule</h4><a id="context-rule-link" hidden target="_blank" rel="noopener noreferrer"></a><details><summary>Read fetched rule text</summary><pre id="context-rule-text"></pre></details>
+  <p id="context-errors" role="status"></p><p id="context-cache" class="context-meta"></p>
+  <div class="context-actions"><button id="context-refresh" class="btn btn-ghost">Refresh context ↻</button><button id="context-download" class="btn btn-ghost">Download JSON ↗</button><a href="/context" class="btn btn-ghost">Context workspace ↗</a></div>
+</section>
+<style>
+  .context-panel { padding: 20px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-surface-2); margin-block: 24px; min-width: 0; }
+  .context-heading { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+  h3 { font-size: .9rem; } h4 { font-size: .8rem; margin: 24px 0 12px; }
+  p, #context-weather :global(p) { font-size: .75rem; color: var(--color-text-secondary); line-height: 1.7; margin-top: 10px; overflow-wrap: anywhere; }
+  .context-meta, #context-status, #context-weather :global(small) { display: block; font-size: .65rem; color: var(--color-text-tertiary); }
+  .context-priority { margin-top: 20px; padding: 14px; background: var(--color-bg); border-radius: 6px; }
+  .context-priority strong { color: var(--color-primary-hover); font-size: .85rem; } .context-priority button { margin-top: 12px; white-space: normal; }
+  a, #context-weather :global(a) { color: var(--color-primary-hover); font-size: .75rem; overflow-wrap: anywhere; }
+  #context-weather :global(article) { padding-block: 12px; border-bottom: 1px solid var(--color-border); }
+  #context-weather :global(p) { max-height: 140px; overflow: auto; white-space: pre-wrap; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .7rem; max-height: 260px; overflow: auto; line-height: 1.7; margin-top: 12px; }
+  summary { cursor: pointer; font-size: .75rem; margin-top: 14px; }
+  .context-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  [hidden] { display: none !important; }
+</style>

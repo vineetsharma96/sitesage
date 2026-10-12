@@ -1,0 +1,50 @@
+.welcome-screen { position: fixed; inset: 0; z-index: 600; display: grid; place-items: center; overflow: hidden; background: #0b1220; }
+.welcome-screen[hidden] { display: none; }
+.welcome-screen::before { content: ''; position: absolute; width: 65vw; height: 65vw; border-radius: 50%; background: radial-gradient(circle, rgba(37,99,235,.15), transparent 65%); pointer-events: none; }
+.welcome-content { text-align: center; position: relative; }
+.welcome-mark { margin: 0 auto 24px; }
+.welcome-label { font-size: .85rem; color: var(--color-text-secondary); margin-bottom: 18px; }
+.welcome-wordmark { font-family: var(--font-display); font-size: clamp(4rem, 13vw, 12rem); font-weight: 600; line-height: 1.2; letter-spacing: -.075em; overflow: hidden; padding: 0 .12em .12em; }
+.welcome-wordmark span { display: inline-block; }
+.welcome-caption { margin-top: 24px; font-size: .8rem; color: var(--color-primary-hover); letter-spacing: .08em; }
+.welcome-skip { position: absolute; top: 32px; right: 32px; color: var(--color-text-secondary); font-size: .8rem; padding: 12px; border: 1px solid var(--color-border); border-radius: 6px; z-index: 1; }
+.welcome-line { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--color-primary); transform-origin: left; }
+.motion-word-mask { display: inline-block; overflow: clip; vertical-align: top; padding-bottom: .18em; margin-bottom: -.18em; }
+.motion-word { display: inline-block; }
+.landing-section.reveal-ready { opacity: 1; transform: none; }
+.product-preview { perspective: 1200px; transform-origin: center center; }
+.product-preview > a { display: block; overflow: hidden; }
+.product-preview img { transform-origin: center; }
+.finale-header { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 56px; }
+.finale-header .landing-cta { margin: 0; flex-shrink: 0; }
+.kinetic-finale { padding-bottom: 100px; }
+.physics-stage { position: relative; height: clamp(480px, 72vh, 780px); overflow: hidden; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-surface); touch-action: pan-y; }
+.physics-letters { position: absolute; inset: 0; display: flex; align-items: start; justify-content: center; gap: .04em; padding-top: 70px; pointer-events: none; }
+.physics-letter { display: inline-block; font-family: var(--font-display); font-size: clamp(3.8rem, 15vw, 14rem); font-weight: 600; line-height: 1.15; letter-spacing: -.06em; color: var(--color-text-primary); user-select: none; pointer-events: auto; touch-action: none; cursor: grab; }
+.physics-letter:nth-child(8n+5), .physics-letter:nth-child(8n+6), .physics-letter:nth-child(8n+7), .physics-letter:nth-child(8n+8) { color: var(--color-primary-hover); }
+.physics-stage.is-physical .physics-letter { position: absolute; top: 0; left: 0; will-change: transform; }
+.physics-stage.is-dragging, .physics-stage.is-dragging .physics-letter { cursor: grabbing; }
+.physics-floor { position: absolute; left: 24px; right: 24px; bottom: 84px; border-top: 1px solid var(--color-border-strong); pointer-events: none; }
+.physics-controls { position: absolute; left: 24px; right: 24px; bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.physics-controls p { max-width: 36ch; font-size: .75rem; color: var(--color-text-secondary); line-height: 1.6; }
+.physics-controls > div { display: flex; gap: 10px; flex-shrink: 0; }
+.physics-stage:not(.is-physical) .physics-controls { visibility: hidden; }
+.physics-enable { margin-bottom: 20px; }
+.physics-enable[hidden] { display: none; }
+@media (max-width: 700px) {
+  .kinetic-finale { padding-bottom: 64px; }
+  .finale-header { align-items: start; flex-direction: column; margin-bottom: 32px; }
+  .physics-stage { height: 460px; }
+  .physics-floor { bottom: 126px; left: 16px; right: 16px; }
+  .physics-controls { left: 16px; right: 16px; bottom: 16px; flex-direction: column; align-items: start; gap: 14px; }
+  .physics-controls > div { flex-wrap: wrap; }
+  .welcome-skip { top: 16px; right: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kinetic-finale:not(:has(.motion-enabled)) { padding-bottom: 64px; }
+  .welcome-screen { display: none !important; }
+  .physics-stage:not(.motion-enabled) { height: 250px; }
+  .physics-stage:not(.motion-enabled) .physics-letter { transform: none !important; position: static !important; cursor: default; }
+  .physics-stage:not(.motion-enabled) .physics-letter { font-size: clamp(2.1rem, 9.5vw, 9rem); }
+  .physics-stage:not(.motion-enabled) .physics-controls, .physics-stage:not(.motion-enabled) .physics-floor { display: none; }
+}

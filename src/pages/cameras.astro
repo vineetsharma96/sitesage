@@ -244,26 +244,26 @@ const offlineCount = cameras.filter(c => c.status === 'offline').length;
 </div>
 
 <!-- OPS STATUS METRIC STRIP -->
-<div class="ops-status-strip" role="region" aria-label="Network Telemetry Summary">
+<div class="ops-status-strip camera-telemetry" role="region" aria-label="Network Telemetry Summary">
   <div class="ops-status-item">
     <span class="status-dot safe" aria-hidden="true"></span>
     <div>
       <div class="ops-status-label">Online Streams</div>
-      <div class="ops-status-value" style="color:var(--color-safe);">{onlineCount} <span style="font-size:11px;color:var(--color-text-tertiary);font-weight:400;">/ {cameras.length} nodes</span></div>
+      <div class="ops-status-value" style="color:var(--color-safe);"><span>{onlineCount}</span><small>/ {cameras.length} nodes</small></div>
     </div>
   </div>
   <div class="ops-status-item">
     <span class="status-dot warning" aria-hidden="true"></span>
     <div>
       <div class="ops-status-label">Degraded Latency</div>
-      <div class="ops-status-value" style="color:var(--color-warning);">{warningCount} Streams</div>
+      <div class="ops-status-value" style="color:var(--color-warning);"><span>{warningCount}</span><small>streams</small></div>
     </div>
   </div>
   <div class="ops-status-item">
     <span class="status-dot critical" aria-hidden="true"></span>
     <div>
       <div class="ops-status-label">Offline Feeds</div>
-      <div class="ops-status-value" style="color:var(--color-critical);">{offlineCount} Nodes</div>
+      <div class="ops-status-value" style="color:var(--color-critical);"><span>{offlineCount}</span><small>nodes</small></div>
     </div>
   </div>
   <div class="ops-status-item">
@@ -272,7 +272,7 @@ const offlineCount = cameras.filter(c => c.status === 'offline').length;
     </svg>
     <div>
       <div class="ops-status-label">Aggregate Bandwidth</div>
-      <div class="ops-status-value">842.6 Mbps</div>
+      <div class="ops-status-value"><span>842.6</span><small>Mbps</small></div>
     </div>
   </div>
   <div class="ops-status-item">
@@ -281,16 +281,16 @@ const offlineCount = cameras.filter(c => c.status === 'offline').length;
     </svg>
     <div>
       <div class="ops-status-label">Edge Ingestion Ping</div>
-      <div class="ops-status-value" style="color:var(--color-safe);">21 ms avg</div>
+      <div class="ops-status-value" style="color:var(--color-safe);"><span>21</span><small>ms avg</small></div>
     </div>
   </div>
   <div class="ops-status-item" style="border-right:none;">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" aria-hidden="true">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-hover)" stroke-width="2" aria-hidden="true">
       <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
     </svg>
     <div>
       <div class="ops-status-label">TensorRT GPU Load</div>
-      <div class="ops-status-value">68% • 42 FPS</div>
+      <div class="ops-status-value"><span>68%</span><small>42 FPS</small></div>
     </div>
   </div>
 </div>
@@ -703,6 +703,14 @@ const offlineCount = cameras.filter(c => c.status === 'offline').length;
 </div>
 
 <style>
+.camera-telemetry { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 0; }
+.camera-telemetry .ops-status-item { display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; gap: 12px; min-width: 0; padding: 22px; border: 0; }
+.camera-telemetry .ops-status-item > :first-child { margin-top: 5px; flex-shrink: 0; }
+.camera-telemetry .ops-status-label { line-height: 1.5; min-height: 2.2rem; }
+.camera-telemetry .ops-status-value { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; font-size: clamp(1rem, 2.2vw, 1.4rem); line-height: 1.5; margin-top: 4px; }
+.camera-telemetry .ops-status-value small { font-size: .7rem; font-weight: 400; color: var(--color-text-secondary); white-space: nowrap; }
+@media (min-width: 1400px) { .camera-telemetry { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .camera-telemetry { grid-template-columns: repeat(2, minmax(0, 1fr)); } .camera-telemetry .ops-status-item { padding: 18px 12px; } }
 .filter-tab {
   background: transparent;
   border: 1px solid var(--color-border);

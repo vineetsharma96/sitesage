@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { CONTEXT_SITE } from '../lib/incident-context.js';
+---
+<Layout title="Incident context" breadcrumb={['Intelligence', 'Incident context']} activePage="context">
+  <div class="page-header"><div><h1 class="page-title">The conditions<br /><em>behind the alert.</em></h1><p class="page-subtitle">TinyFish Search, Fetch and daily source monitoring. Existing safety research remains available.</p></div><a href="/research" class="btn btn-ghost">Safety research ↗</a></div>
+  <div class="context-workspace">
+    <section class="card context-intro"><span class="tech-label">{CONTEXT_SITE.name} / {CONTEXT_SITE.city}</span><h2>Evidence meets<br />outside context.</h2><p>New incidents appear immediately. TinyFish looks for official weather advisories and reads the matching safety rule in the background. Site results are reused across incidents.</p><ol><li>Camera detection creates an alert</li><li>Search advisories and fetch the rule</li><li>Attach sources, timestamps and a suggested priority</li><li>A safety officer verifies and reviews</li></ol><p class="context-note">Demo location: New Delhi. Weather results need location and validity checks. The existing rules are US OSHA references; their applicability in India is not established.</p></section>
+    <section class="card context-demo"><span class="tech-label">Try an incident / simulated evidence</span><h2>Open an enriched alert.</h2><p>These examples use live TinyFish context. Your existing evidence drawer and research workflow are preserved.</p><button class="context-example" data-context-example="zones"><span><strong>Restricted zone entry</strong><small>Medium priority · crane staging</small></span><span>↗</span></button><button class="context-example" data-context-example="fall"><span><strong>Missing fall protection</strong><small>High priority · elevated platform</small></span><span>↗</span></button><button class="context-example" data-context-example="ppe"><span><strong>No hard hat</strong><small>Critical priority · Sector B</small></span><span>↗</span></button><p id="context-config" role="status">Checking TinyFish…</p></section>
+  </div>
+  <section class="card context-monitor" aria-labelledby="monitor-title"><div><span class="tech-label">Regulation & advisory watch</span><h2 id="monitor-title">Daily checks. Traceable changes.</h2><p>Registered TinyFish monitors check rules and weather sources at 07:00 India time and deliver results to the backend. Changes refresh cached context for subsequent incidents.</p></div><div id="monitor-sources" aria-live="polite">Loading monitor status…</div><p class="context-note">Daily monitoring requires a public HTTPS callback and PostgreSQL. Unregistered sources are marked as awaiting setup.</p></section>
+</Layout>
+<style>
+  .page-title em { font-family: var(--font-editorial); font-weight: 400; color: var(--color-primary-hover); }
+  .context-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .context-intro, .context-demo, .context-monitor { padding: 28px; }
+  h2 { font-size: 1.8rem; font-weight: 500; letter-spacing: -.05em; line-height: 1.2; margin-top: 20px; }
+  p { font-size: .8rem; color: var(--color-text-secondary); line-height: 1.8; margin-top: 18px; }
+  ol { margin: 24px 0; padding-left: 20px; font-size: .85rem; line-height: 2.4; }
+  .context-note { font-size: .7rem; color: var(--color-text-tertiary); }
+  .context-example { display: flex; width: 100%; text-align: left; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .context-example strong { font-weight: 500; font-size: .9rem; } .context-example small { display: block; font-size: .7rem; color: var(--color-text-secondary); margin-top: 8px; }
+  .context-example > span:last-child { font-size: 1.4rem; color: var(--color-primary-hover); }
+  .context-monitor { margin-top: 24px; }
+  #monitor-sources { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; margin-top: 28px; }
+  #monitor-sources :global(article) { padding-top: 20px; border-top: 1px solid var(--color-border); }
+  #monitor-sources :global(a) { color: var(--color-primary-hover); font-size: .85rem; }
+  #monitor-sources :global(p) { font-size: .75rem; color: var(--color-text-secondary); margin-top: 12px; }
+  @media(max-width:800px) { .context-workspace, #monitor-sources { grid-template-columns: 1fr; } }
+</style>
+<script>
+  const examples = { zones: { detection: 'Restricted Zone Breach', severity: 'medium' }, fall: { detection: 'Missing Fall Protection', severity: 'high' }, ppe: { detection: 'No Hard Hat', severity: 'critical' } };
+  document.querySelectorAll<HTMLButtonElement>('[data-context-example]').forEach(button => button.addEventListener('click', () => {
+    const topic = button.dataset.contextExample as keyof typeof examples;
+    (window as any).__openIncidentDrawer({ ...examples[topic], id: `INC-CONTEXT-${topic}`, camera: 'CAM-04 / demo', location: 'New Delhi / North Tower demo', confidence: '96', timestamp: new Date().toLocaleTimeString() });
+  }));
+  fetch('/api/incident-context').then(r => r.json()).then(data => { document.getElementById('context-config')!.textContent = data.configured ? 'TinyFish key configured / live context available' : 'Configure a server-side TinyFish key to run live context.'; }).catch(() => { document.getElementById('context-config')!.textContent = 'Context connection unavailable.'; });
+  fetch('/api/context-monitors').then(r => r.json()).then(data => {
+    const container = document.getElementById('monitor-sources')!; container.replaceChildren();
+    data.sources.forEach((source: any) => {
+      const article = document.createElement('article'); const a = document.createElement('a'); a.href = source.sourceUrl; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = `${source.title} ↗`;
+      const p = document.createElement('p'); p.textContent = source.configured ? `${source.changed ? 'Source changed / review needed' : 'Monitoring active'} · Last check: ${source.checkedAt ? new Date(source.checkedAt).toLocaleString() : 'awaiting first result'} · ${source.changes.length} recorded changes` : 'Daily monitor awaiting setup'; article.append(a,p); container.append(article);
+    });
+  }).catch(() => { document.getElementById('monitor-sources')!.textContent = 'Monitor status unavailable.'; });
+</script>

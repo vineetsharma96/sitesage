@@ -3,7 +3,7 @@
  * Single source of truth for all visual values.
  * Import this FIRST in global.css.
  */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Libre+Caslon+Display&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
   /* ────────── COLOR — BACKGROUNDS ────────── */
@@ -48,16 +48,17 @@
   /* ────────── COLOR — TEXT ────────── */
   --color-text-primary:   #F9FAFB;
   --color-text-secondary: #9CA3AF;
-  --color-text-tertiary:  #6B7280;
-  --color-text-disabled:  #4B5563;
+  --color-text-tertiary:  #94A3B8;
+  --color-text-disabled:  #64748B;
 
   /* ────────── TYPOGRAPHY ────────── */
-  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-editorial: 'Libre Caslon Display', Georgia, serif;
   --font-mono:  'JetBrains Mono', 'Courier New', monospace;
 
   --text-display:  clamp(2rem, 4vw, 3.5rem);
-  --text-h1:       clamp(1.5rem, 2.5vw, 2rem);
+  --text-h1:       clamp(2rem, 3vw, 2.8rem);
   --text-h2:       1.25rem;
   --text-h3:       1rem;
   --text-body:     0.875rem;
@@ -104,9 +105,9 @@
   --shadow-primary: 0 0 0 1px var(--color-primary), 0 4px 16px var(--color-primary-glow);
 
   /* ────────── LAYOUT ────────── */
-  --sidebar-width:     220px;
+  --sidebar-width:     228px;
   --sidebar-collapsed: 56px;
-  --header-height:     56px;
+  --header-height:     72px;
   --content-max:       1440px;
 
   /* ────────── Z-INDEX ────────── */

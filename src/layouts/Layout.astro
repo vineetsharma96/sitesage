@@ -5,7 +5,9 @@
  * Notification Dropdown, Incident Drawer, Demo Controls.
  */
 import '../styles/global.css';
+import '../styles/refinement.css';
 import HumanoidWorker from '../components/HumanoidWorker.astro';
+import IncidentContext from '../components/IncidentContext.astro';
 
 export interface Props {
   title?: string;
@@ -41,6 +43,7 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 <div class="app-shell" id="app-shell">
 
@@ -48,6 +51,9 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
        TOP HEADER
   ════════════════════════════════════════════ -->
   <header class="top-header" role="banner">
+    <button class="menu-toggle icon-btn" id="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
 
     <!-- Brand -->
     <a href="/" class="brand" aria-label="SiteSage home">
@@ -203,6 +209,7 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
        SIDEBAR NAVIGATION
   ════════════════════════════════════════════ -->
   <nav class="sidebar" aria-label="Main navigation" id="sidebar">
+    <div class="sidebar-heading"><span>Navigation</span><button class="icon-btn" id="menu-close" aria-label="Close navigation menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div>
 
     <span class="sidebar-section-label">Operations</span>
 
@@ -282,7 +289,15 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
       <span>Reports</span>
     </a>
 
+    <a href="/research" class={`nav-link ${activePage === 'research' ? 'active' : ''}`} aria-current={activePage === 'research' ? 'page' : undefined}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6M7 10h6m-3-3v6"/></svg>
+      <span>Safety research</span>
+    </a>
+    <a href="/context" class={`nav-link ${activePage === 'context' ? 'active' : ''}`} aria-current={activePage === 'context' ? 'page' : undefined}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 16a4 4 0 014-4 6 6 0 0112 0 4 4 0 010 8H7a4 4 0 01-4-4Z"/><path d="M12 8V3m-3 3 3-3 3 3"/></svg><span>Incident context</span>
+    </a>
     <div class="sidebar-spacer"></div>
+    <div class="sidebar-note"><em>Detect, don't decide.</em>Evidence for your team.<br />People make the call.</div>
 
     <div class="sidebar-footer">
       <a href="/settings"
@@ -312,11 +327,14 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
      INCIDENT INVESTIGATION DRAWER
 ════════════════════════════════════════════ -->
 <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+<div class="menu-backdrop" id="menu-backdrop" aria-hidden="true"></div>
 
 <aside
   class="incident-drawer"
   id="incident-drawer"
-  role="complementary"
+  role="dialog"
+  aria-modal="true"
+  inert
   aria-label="Incident Investigation"
   aria-hidden="true"
 >
@@ -401,6 +419,12 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
       </div>
     </section>
 
+    <IncidentContext />
+    <section class="research-callout" aria-label="Research safety guidance">
+      <div><h2>Put this event in context.</h2><p>Read official safety guidance with TinyFish.</p></div>
+      <a href="/research" class="btn btn-primary" id="drawer-research-link">Research ↗</a>
+    </section>
+
     <!-- Incident Timeline -->
     <section aria-labelledby="timeline-heading">
       <div class="drawer-section-title" id="timeline-heading">Field Action Timeline</div>
@@ -478,8 +502,8 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
 <!-- ════════════════════════════════════════════
      DEMO CONTROLS
 ════════════════════════════════════════════ -->
-<div class="demo-controls" role="region" aria-label="Demo controls">
-  <div class="demo-controls-label">Demo Controls</div>
+<details class="demo-controls" aria-label="Demo controls">
+  <summary class="demo-controls-label">Demo Controls</summary>
   <button class="btn btn-critical btn-sm" id="demo-simulate-btn" style="width:100%;justify-content:center;">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
       <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -493,9 +517,43 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
     </svg>
     Simulate Resolution
   </button>
-</div>
+</details>
 
 <script>
+  const menuToggle = document.getElementById('menu-toggle')!;
+  const menuClose = document.getElementById('menu-close')!;
+  const menuPanel = document.getElementById('sidebar')!;
+  const menuBackdrop = document.getElementById('menu-backdrop')!;
+  const mainContent = document.getElementById('main-content')!;
+  let menuOpen = false;
+  function setMenu(open: boolean, restoreFocus = true) {
+    menuOpen = open;
+    menuPanel.classList.toggle('menu-open', menuOpen);
+    menuBackdrop.classList.toggle('menu-open', menuOpen);
+    menuToggle.setAttribute('aria-expanded', String(menuOpen));
+    menuPanel.inert = !menuOpen;
+    menuPanel.setAttribute('aria-hidden', String(!menuOpen));
+    mainContent.inert = menuOpen;
+    if (menuOpen) menuClose.focus();
+    else if (restoreFocus) menuToggle.focus();
+  }
+  menuToggle.addEventListener('click', () => setMenu(!menuOpen));
+  menuClose.addEventListener('click', () => setMenu(false));
+  menuBackdrop.addEventListener('click', () => setMenu(false));
+  menuPanel.querySelectorAll<HTMLElement>('.nav-link').forEach((link, index) => link.style.setProperty('--nav-index', String(index)));
+  menuPanel.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false, false)));
+  document.addEventListener('keydown', event => {
+    if (!menuOpen) return;
+    if (event.key === 'Escape') { event.preventDefault(); setMenu(false); }
+    if (event.key === 'Tab') {
+      const controls = Array.from(menuPanel.querySelectorAll<HTMLElement>('button, a[href]')).filter(el => el.getClientRects().length);
+      const first = controls[0]; const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    }
+  });
+  setMenu(false, false);
+
   // ── Notification dropdown ──────────────────────────────
   const notifBtn = document.getElementById('notif-btn')!;
   const notifDropdown = document.getElementById('notif-dropdown')!;
@@ -513,11 +571,17 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
   });
 
   // ── Incident Drawer ────────────────────────────────────
+  import { loadIncidentContext, initContextControls } from '../lib/incident-context-client';
+  initContextControls();
   const drawer = document.getElementById('incident-drawer')!;
   const backdrop = document.getElementById('drawer-backdrop')!;
   const closeBtn = document.getElementById('close-drawer')!;
+  let drawerTrigger: HTMLElement | null = null;
 
   function openDrawer(data?: Record<string, string>) {
+    if (!drawer.classList.contains('open')) drawerTrigger = document.activeElement as HTMLElement;
+    drawer.inert = false;
+    document.getElementById('app-shell')!.inert = true;
     drawer.classList.add('open');
     backdrop.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
@@ -527,6 +591,12 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
 
     // Update drawer content if data provided
     if (data) {
+      void loadIncidentContext(data);
+      const researchLink = document.getElementById('drawer-research-link') as HTMLAnchorElement;
+      if (researchLink) {
+        const topic = /fall|tether/i.test(data.detection ?? '') ? 'fall' : /zone|buffer|gate/i.test(data.detection ?? '') ? 'zones' : 'ppe';
+        researchLink.href = `/research?topic=${topic}&incident=${encodeURIComponent(data.id ?? '')}`;
+      }
       const fields = {
         'drawer-incident-id':    data.id,
         'drawer-incident-title': data.detection,
@@ -549,17 +619,27 @@ const breadcrumbList: string[] = Array.isArray(breadcrumb)
   }
 
   function closeDrawer() {
+    if (!drawer.classList.contains('open')) return;
     drawer.classList.remove('open');
     backdrop.classList.remove('open');
     drawer.setAttribute('aria-hidden', 'true');
     backdrop.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    drawer.inert = true;
+    document.getElementById('app-shell')!.inert = false;
+    drawerTrigger?.focus();
   }
 
   closeBtn.addEventListener('click', closeDrawer);
   backdrop.addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeDrawer();
+    if (e.key === 'Tab' && drawer.classList.contains('open')) {
+      const controls = Array.from(drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex="0"]')).filter(el => el.getClientRects().length);
+      const first = controls[0]; const last = controls[controls.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+    }
   });
 
   // Expose globally for page scripts

@@ -4,6 +4,7 @@
  * Import and call initSimulator() in your page's client script.
  */
 
+import { requestIncidentContext } from './incident-context-client';
 export interface SimEvent {
   id: string;
   type: 'critical_incident' | 'warning' | 'resolved' | 'system';
@@ -48,6 +49,7 @@ export function onSimEvent(cb: EventCallback) {
 
 function dispatch(event: SimEvent) {
   listeners.forEach(cb => cb(event));
+  if (event.type !== 'resolved' && event.type !== 'system') void requestIncidentContext(event).catch(() => {});
 }
 
 // Public event emitter for demo mode "Simulate Critical Alert" button

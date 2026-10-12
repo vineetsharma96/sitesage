@@ -9,7 +9,7 @@ import { TOOLBOX_BRIEFING } from '../data/mockData';
 <div class="card toolbox-card" style="padding:14px;background:linear-gradient(175deg, #111a2e 0%, #0c1424 100%);border:1px solid var(--color-border);display:flex;flex-direction:column;gap:10px;">
   
   <!-- Header with OSHA / Toolbox Badge -->
-  <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-border);padding-bottom:8px;">
+  <div class="toolbox-header" style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-border);padding-bottom:8px;">
     <div style="display:flex;align-items:center;gap:8px;">
       <div style="width:28px;height:28px;border-radius:6px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);display:flex;align-items:center;justify-content:center;color:var(--color-safe);">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -48,7 +48,7 @@ import { TOOLBOX_BRIEFING } from '../data/mockData';
   </div>
 
   <!-- Signed Off Footer -->
-  <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);padding-top:6px;border-top:1px solid rgba(255,255,255,0.04);">
+  <div class="toolbox-footer" style="display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);padding-top:6px;border-top:1px solid rgba(255,255,255,0.04);">
     <div style="display:flex;align-items:center;gap:4px;">
       <span style="color:var(--color-safe);font-weight:700;">✓ DIGITALLY SIGNED:</span>
       <span>{TOOLBOX_BRIEFING.supervisorSignOff} ({TOOLBOX_BRIEFING.signOffTime})</span>
@@ -59,6 +59,15 @@ import { TOOLBOX_BRIEFING } from '../data/mockData';
   </div>
 
 </div>
+
+<style>
+  .toolbox-card { min-width: 0; }
+  .toolbox-header, .toolbox-footer { flex-wrap: wrap; gap: 12px; align-items: flex-start !important; }
+  .toolbox-header > div { flex: 1 1 240px; min-width: 0; align-items: flex-start !important; }
+  .toolbox-header > div > div:first-child { flex-shrink: 0; }
+  .toolbox-header > .badge { white-space: normal; line-height: 1.5; }
+  .toolbox-footer > div { flex: 1 1 240px; flex-wrap: wrap; }
+</style>
 
 <script>
   document.getElementById('btn-view-sign-sheet')?.addEventListener('click', () => {

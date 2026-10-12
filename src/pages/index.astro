@@ -1,598 +1,84 @@
 ---
-/**
- * SiteSage — Marketing Landing Page
- * Route: /
- * Cinematic hero, scroll storytelling, product narrative
- */
 import '../styles/global.css';
+import '../styles/refinement.css';
+import '../styles/landing.css';
+import '../styles/landing-motion.css';
 ---
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="SiteSage transforms your construction site cameras into AI-powered safety intelligence. See risks. Detect violations. Act faster. Book a demo." />
+  <meta name="description" content="SiteSage turns existing construction cameras into reviewable safety events. Explore the live prototype and TinyFish safety research." />
   <meta name="theme-color" content="#0B1220" />
-  <meta property="og:title" content="SiteSage — Construction AI Safety Platform" />
-  <meta property="og:description" content="Turn your CCTV into construction intelligence. Real-time PPE detection, geofence violations, and site-wide safety command." />
-  <title>SiteSage — AI-Powered Construction Safety Command Center</title>
+  <meta property="og:title" content="SiteSage | Construction AI Safety Platform" />
+  <meta property="og:description" content="See risks earlier. Give your team evidence to act. Explore the SiteSage prototype." />
+  <title>SiteSage | AI-Powered Construction Safety Command Center</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
-<body style="background:#0B1220;color:#F9FAFB;font-family:'Inter',system-ui,sans-serif;overflow-x:hidden;">
-
-<!-- ════════════════════════════════════════
-     LANDING NAV
-════════════════════════════════════════ -->
-<nav id="landing-nav" style="
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 48px;height:64px;
-  background:rgba(11,18,32,0.85);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  transition:background 0.3s;
-">
-  <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-      <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" fill="#111827" stroke="#2563EB" stroke-width="1.5"/>
-      <polygon points="16,7 23,11 23,21 16,25 9,21 9,11" fill="none" stroke="rgba(59,130,246,0.3)" stroke-width="0.8"/>
-      <circle cx="16" cy="16" r="4" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="1.5" fill="#EF4444"/>
-      <line x1="16" y1="5"  x2="16" y2="10" stroke="#3B82F6" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
-      <line x1="16" y1="22" x2="16" y2="27" stroke="#3B82F6" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
-      <line x1="5"  y1="16" x2="10" y2="16" stroke="#3B82F6" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
-      <line x1="22" y1="16" x2="27" y2="16" stroke="#3B82F6" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
-    </svg>
-    <span style="font-family:'Manrope',sans-serif;font-size:1.0625rem;font-weight:800;letter-spacing:-0.02em;">SiteSage</span>
-  </a>
-
-  <div style="display:flex;align-items:center;gap:24px;">
-    <a href="#how-it-works" style="font-size:0.8125rem;color:#9CA3AF;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#F9FAFB'" onmouseout="this.style.color='#9CA3AF'">How It Works</a>
-    <a href="#features" style="font-size:0.8125rem;color:#9CA3AF;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#F9FAFB'" onmouseout="this.style.color='#9CA3AF'">Features</a>
-    <a href="#trust" style="font-size:0.8125rem;color:#9CA3AF;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#F9FAFB'" onmouseout="this.style.color='#9CA3AF'">Trust & Privacy</a>
-    <a href="/dashboard" style="
-      display:inline-flex;align-items:center;gap:6px;
-      padding:7px 16px;
-      background:#2563EB;color:#fff;
-      border-radius:6px;font-size:0.8125rem;font-weight:600;
-      text-decoration:none;
-      transition:background 0.15s;
-    " onmouseover="this.style.background='#3B82F6'" onmouseout="this.style.background='#2563EB'">
-      Enter Platform
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-    </a>
+<body class="landing">
+  <div class="welcome-screen" id="welcome-screen" role="dialog" aria-modal="true" aria-label="Welcome to SiteSage" hidden>
+    <button class="welcome-skip" id="welcome-skip">Skip intro ↗</button>
+    <div class="welcome-content"><img class="welcome-mark" src="/favicon.svg" alt="" width="64" height="64" /><p class="welcome-label">Welcome to</p><div class="welcome-wordmark" aria-label="SiteSage">{'SiteSage'.split('').map(letter => <span aria-hidden="true">{letter}</span>)}</div><p class="welcome-caption">Detect. Review. Respond.</p></div>
+    <div class="welcome-line" aria-hidden="true"></div>
   </div>
-</nav>
-
-<!-- ════════════════════════════════════════
-     HERO SECTION
-════════════════════════════════════════ -->
-<section id="hero" style="
-  position:relative;min-height:100vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:80px 24px 60px;
-  overflow:hidden;text-align:center;
-">
-
-  <!-- Background construction grid -->
-  <div aria-hidden="true" style="position:absolute;inset:0;overflow:hidden;opacity:0.35;">
-    <svg width="100%" height="100%" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-      <!-- Technical grid -->
-      <defs>
-        <pattern id="grid-sm" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59,130,246,0.12)" stroke-width="0.5"/>
-        </pattern>
-        <pattern id="grid-lg" width="160" height="160" patternUnits="userSpaceOnUse">
-          <path d="M 160 0 L 0 0 0 160" fill="none" stroke="rgba(59,130,246,0.18)" stroke-width="1"/>
-        </pattern>
-        <radialGradient id="hero-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stop-color="rgba(37,99,235,0.15)"/>
-          <stop offset="100%" stop-color="rgba(11,18,32,0)"/>
-        </radialGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid-sm)"/>
-      <rect width="100%" height="100%" fill="url(#grid-lg)"/>
-      <ellipse cx="720" cy="450" rx="600" ry="400" fill="url(#hero-glow)"/>
-
-      <!-- Construction site wireframe -->
-      <!-- Crane -->
-      <line x1="900" y1="100" x2="900" y2="700" stroke="rgba(59,130,246,0.2)" stroke-width="2"/>
-      <line x1="900" y1="140" x2="1100" y2="140" stroke="rgba(59,130,246,0.2)" stroke-width="2"/>
-      <line x1="900" y1="140" x2="800" y2="140" stroke="rgba(59,130,246,0.2)" stroke-width="1.5"/>
-      <line x1="1100" y1="140" x2="900" y2="500" stroke="rgba(59,130,246,0.1)" stroke-width="1" stroke-dasharray="6,4"/>
-
-      <!-- Building skeleton -->
-      <rect x="300" y="250" width="300" height="500" fill="none" stroke="rgba(59,130,246,0.15)" stroke-width="1"/>
-      {[300,350,400,450,500,550,600,650].map((y, i) => (
-        <line x1="300" y1={y} x2="600" y2={y} stroke="rgba(59,130,246,0.1)" stroke-width="0.5"/>
-      ))}
-      {[350,400,450,500,550].map((x, i) => (
-        <line x1={x} y1="250" x2={x} y2="750" stroke="rgba(59,130,246,0.1)" stroke-width="0.5"/>
-      ))}
-
-      <!-- Scanning circle -->
-      <circle cx="720" cy="450" r="350" fill="none" stroke="rgba(6,182,212,0.08)" stroke-width="1" stroke-dasharray="4,8"/>
-      <circle cx="720" cy="450" r="200" fill="none" stroke="rgba(6,182,212,0.06)" stroke-width="1" stroke-dasharray="4,8"/>
-    </svg>
-  </div>
-
-  <!-- Animated scanning beam -->
-  <div aria-hidden="true" style="
-    position:absolute;top:50%;left:50%;
-    width:2px;height:350px;
-    background:linear-gradient(to top,rgba(37,99,235,0.0),rgba(37,99,235,0.4));
-    transform-origin:bottom center;
-    transform:translateX(-50%);
-    animation:hero-scan 6s linear infinite;
-    opacity:0.5;
-  "></div>
-
-  <!-- Pill badge -->
-  <div class="hero-pill animate-fade-in" style="
-    display:inline-flex;align-items:center;gap:8px;
-    padding:5px 14px;margin-bottom:28px;
-    background:rgba(37,99,235,0.1);
-    border:1px solid rgba(59,130,246,0.25);
-    border-radius:999px;
-    font-size:0.75rem;font-weight:600;
-    letter-spacing:0.06em;text-transform:uppercase;
-    color:#3B82F6;
-  ">
-    <span style="width:7px;height:7px;border-radius:50%;background:#EF4444;animation:blink 1.4s ease-in-out infinite;"></span>
-    AI-Powered Construction Safety Intelligence
-  </div>
-
-  <!-- Headline -->
-  <h1 style="
-    font-family:'Manrope',sans-serif;
-    font-size:clamp(2.8rem,6vw,5rem);
-    font-weight:800;
-    letter-spacing:-0.04em;
-    line-height:1.05;
-    margin-bottom:20px;
-    max-width:900px;
-    animation:fade-in 0.6s ease-out 0.2s both;
-  ">
-    See your site.<br/>
-    <span style="color:#3B82F6;">Detect risks.</span><br/>
-    Act faster.
-  </h1>
-
-  <!-- Subheadline -->
-  <p style="
-    font-size:clamp(1rem,2vw,1.25rem);
-    color:#9CA3AF;
-    max-width:560px;
-    line-height:1.6;
-    margin-bottom:40px;
-    animation:fade-in 0.6s ease-out 0.4s both;
-  ">
-    SiteSage transforms your existing CCTV into an AI-powered safety command center.<br/>
-    Real-time PPE detection, geofence monitoring, and incident intelligence — from any camera.
-  </p>
-
-  <!-- CTAs -->
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fade-in 0.6s ease-out 0.6s both;">
-    <a href="/dashboard" style="
-      display:inline-flex;align-items:center;gap:8px;
-      padding:13px 28px;
-      background:#2563EB;color:#fff;
-      border-radius:8px;font-size:0.9375rem;font-weight:700;
-      text-decoration:none;letter-spacing:-0.01em;
-      box-shadow:0 4px 24px rgba(37,99,235,0.35);
-      transition:all 0.15s;
-    " onmouseover="this.style.background='#3B82F6';this.style.boxShadow='0 4px 32px rgba(59,130,246,0.45)'"
-       onmouseout="this.style.background='#2563EB';this.style.boxShadow='0 4px 24px rgba(37,99,235,0.35)'">
-      Explore the Platform
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-    </a>
-    <a href="#how-it-works" style="
-      display:inline-flex;align-items:center;gap:8px;
-      padding:13px 28px;
-      background:transparent;color:#F9FAFB;
-      border:1px solid rgba(255,255,255,0.15);
-      border-radius:8px;font-size:0.9375rem;font-weight:600;
-      text-decoration:none;
-      transition:all 0.15s;
-    " onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.background='rgba(255,255,255,0.05)'"
-       onmouseout="this.style.borderColor='rgba(255,255,255,0.15)';this.style.background='transparent'">
-      See How It Works
-    </a>
-  </div>
-
-  <!-- Social proof / trust line -->
-  <div style="margin-top:60px;animation:fade-in 0.6s ease-out 0.8s both;">
-    <p style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#4B5563;margin-bottom:16px;">
-      Trusted by construction teams managing
-    </p>
-    <div style="display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;">
-      {['50+ Active Cameras','200+ Workers Monitored','99.4% Uptime','< 30ms Detection Latency'].map(stat => (
-        <div style="font-size:0.875rem;font-weight:600;color:#6B7280;">
-          {stat}
-        </div>
-      ))}
-    </div>
-  </div>
-
-  <!-- Hero dashboard preview -->
-  <div style="
-    margin-top:80px;
-    width:min(1100px,100%);
-    border-radius:12px;
-    border:1px solid rgba(59,130,246,0.2);
-    overflow:hidden;
-    box-shadow:0 40px 120px rgba(0,0,0,0.6),0 0 0 1px rgba(59,130,246,0.1);
-    animation:fade-in 0.8s ease-out 1s both;
-    position:relative;
-  ">
-    <!-- Dashboard preview SVG art -->
-    <div style="background:#111827;padding:0;">
-      <!-- Mini header -->
-      <div style="background:#111827;border-bottom:1px solid #1F2937;padding:10px 16px;display:flex;align-items:center;gap:10px;">
-        <div style="width:28px;height:28px;border-radius:6px;border:1px solid #1F2937;display:flex;align-items:center;justify-content:center;">
-          <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-            <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" fill="#111827" stroke="#2563EB" stroke-width="1.5"/>
-            <circle cx="16" cy="16" r="4" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
-            <circle cx="16" cy="16" r="1.5" fill="#EF4444"/>
-          </svg>
-        </div>
-        <span style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.06em;text-transform:uppercase;">SiteSage Command Center</span>
-        <div style="margin-left:auto;display:flex;gap:6px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#EF4444;animation:blink 1.4s ease-in-out infinite;"></span>
-          <span style="font-size:10px;color:#9CA3AF;">LIVE</span>
-        </div>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <nav class="landing-nav" id="landing-nav" aria-label="Main navigation">
+    <a href="/" class="brand" aria-label="SiteSage home"><img src="/favicon.svg" width="30" height="30" alt="" /><span class="brand-name">SiteSage</span></a>
+    <div class="landing-links"><a href="#how-it-works">How It Works</a><a href="#features">Features</a><a href="#trust">Trust & Privacy</a></div>
+    <a class="landing-enter" href="/dashboard">Enter Platform <span aria-hidden="true">↗</span></a>
+  </nav>
+  <main id="main-content">
+    <section class="landing-hero" id="hero" aria-labelledby="hero-title">
+      <div class="hero-eyebrow">Construction safety intelligence</div>
+      <h1 id="hero-title">See risk.<br />Protect <em>people.</em></h1>
+      <div class="hero-bottom"><span class="hero-principle">Detect, <em>don't decide.</em></span><div class="hero-description"><p>Turn existing cameras into safety evidence. Help your team spot risks, review events, and respond sooner.</p><a href="/dashboard" class="landing-cta">Explore demo <span aria-hidden="true">↗</span></a></div></div>
+    </section>
+    <section class="product-preview" aria-label="SiteSage dashboard preview">
+      <div class="preview-toolbar"><span><span class="preview-dot" aria-hidden="true"></span> SiteSage command center</span><span>Interactive prototype / simulated data</span></div>
+      <a href="/dashboard" aria-label="Open the interactive SiteSage dashboard"><img src="/dashboard-preview.png" width="1440" height="960" alt="SiteSage prototype showing a construction camera feed, PPE detections, safety events and operational metrics." fetchpriority="high" /></a>
+      <div class="preview-caption"><p>One place to see what needs attention.</p><a href="/monitoring">Explore camera views ↗</a></div>
+    </section>
+    <section class="workflow-section landing-section" id="how-it-works" aria-labelledby="workflow-title">
+      <h2 id="workflow-title">From passive video<br />to <em>active awareness.</em></h2>
+      <p class="section-intro">Your cameras are the starting point. A reviewable event is the result.</p>
+      <div class="workflow-list">
+        {[
+          {title:'Connect existing cameras', text:'RTSP and ONVIF-compatible feeds are the proposed entry point. Keep suitable cameras and add an intelligence layer.', tag:'Camera → Edge'},
+          {title:'Detect and apply rules', text:'Identify people, helmets and safety vests. Combine detections with configured zones to flag possible safety events.', tag:'Vision → Risk'},
+          {title:'Review the evidence', text:'Bring snapshots, confidence and event context to a safety officer. People verify the event and choose the response.', tag:'Evidence → Review'},
+        ].map(item => <article class="workflow-row"><h3>{item.title}</h3><p>{item.text}</p><span>{item.tag}</span></article>)}
       </div>
-
-      <!-- Mini dashboard -->
-      <div style="display:grid;grid-template-columns:1fr 220px;min-height:380px;">
-        <!-- Left: Camera + analytics -->
-        <div style="padding:12px;border-right:1px solid #1F2937;">
-          <!-- Ops strip -->
-          <div style="display:flex;gap:6px;margin-bottom:10px;">
-            {[
-              {l:'Operational',c:'#10B981'},{l:'22/24 Cameras',c:'#3B82F6'},
-              {l:'7 Active Risks',c:'#F59E0B'},{l:'94.2% Safe',c:'#10B981'},
-            ].map(s => (
-              <div style={`padding:4px 8px;background:#172033;border:1px solid #1F2937;border-radius:4px;font-size:9px;font-weight:600;color:${s.c};`}>
-                {s.l}
-              </div>
-            ))}
-          </div>
-          <!-- Camera feed sim -->
-          <div style="background:#060d1a;border-radius:6px;aspect-ratio:16/9;position:relative;overflow:hidden;margin-bottom:10px;">
-            <svg width="100%" height="100%" viewBox="0 0 560 315" preserveAspectRatio="xMidYMid slice">
-              <rect width="560" height="315" fill="#060d1a"/>
-              <!-- Grid lines -->
-              {[0,1,2,3,4,5,6].map((i) => (
-                <line x1={80*i} y1="0" x2={80*i} y2="315" stroke="#0d1c38" stroke-width="0.5"/>
-              ))}
-              {[0,1,2,3].map((i) => (
-                <line x1="0" y1={80*i} x2="560" y2={80*i} stroke="#0d1c38" stroke-width="0.5"/>
-              ))}
-              <!-- Building -->
-              <rect x="150" y="40" width="200" height="240" fill="#091528" stroke="#152238" stroke-width="1"/>
-              <!-- Workers -->
-              <circle cx="220" cy="130" r="14" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1.5"/>
-              <text x="220" y="135" text-anchor="middle" font-size="8" fill="#10B981">✓ 96%</text>
-              <circle cx="310" cy="170" r="14" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444" stroke-width="1.5"/>
-              <text x="310" y="175" text-anchor="middle" font-size="8" fill="#EF4444">! 98%</text>
-              <!-- Camera overlay -->
-              <text x="8" y="16" font-size="8" fill="rgba(6,182,212,0.8)" font-family="monospace">CAM-04 · SECTOR B · 14:43:17</text>
-              <!-- HUD corners -->
-              <path d="M5 20 L5 5 L20 5" fill="none" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
-              <path d="M555 20 L555 5 L540 5" fill="none" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
-            </svg>
-            <!-- LIVE badge -->
-            <div style="position:absolute;top:6px;right:6px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:3px;padding:2px 7px;font-size:8px;font-weight:700;color:#EF4444;">
-              ● LIVE
-            </div>
-          </div>
-          <!-- Analytics row -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div style="background:#111827;border:1px solid #1F2937;border-radius:6px;padding:10px;">
-              <div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:#6B7280;text-transform:uppercase;margin-bottom:6px;">Safety Compliance</div>
-              <svg width="100%" height="50" viewBox="0 0 160 50">
-                <polyline points="0,40 20,38 40,42 60,35 80,28 100,22 120,18 140,15 160,12"
-                  fill="none" stroke="#10B981" stroke-width="1.5"/>
-                <polyline points="0,40 20,38 40,42 60,35 80,28 100,22 120,18 140,15 160,12 160,50 0,50"
-                  fill="url(#safe-fill)" stroke="none"/>
-                <defs>
-                  <linearGradient id="safe-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgba(16,185,129,0.2)"/>
-                    <stop offset="100%" stop-color="rgba(16,185,129,0)"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <div style="background:#111827;border:1px solid #1F2937;border-radius:6px;padding:10px;">
-              <div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:#6B7280;text-transform:uppercase;margin-bottom:6px;">Incident Distribution</div>
-              <div style="display:flex;gap:3px;align-items:flex-end;height:50px;padding-top:6px;">
-                {[30,48,22,36,42,18,55].map((h,i) => (
-                  <div style={`flex:1;background:${h>40?'#EF4444':h>30?'#F59E0B':'#2563EB'};border-radius:2px 2px 0 0;height:${h}%;opacity:0.8;`}></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Alerts rail -->
-        <div style="padding:10px;display:flex;flex-direction:column;gap:6px;overflow:hidden;">
-          <div style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7280;margin-bottom:2px;">Real-Time Alerts</div>
-          {[
-            { s:'critical', t:'No Hard Hat',       c:'CAM-04 · Sector B', time:'Now'    },
-            { s:'critical', t:'Zone Breach',       c:'CAM-03 · Crane Area',time:'2m ago' },
-            { s:'high',     t:'No Safety Vest',    c:'CAM-01 · Level 08',  time:'5m ago' },
-            { s:'safe',     t:'PPE Restored',      c:'CAM-02 · Sector A',  time:'7m ago' },
-            { s:'high',     t:'Proximity Alert',   c:'CAM-04 · Crane Zone',time:'9m ago' },
-          ].map(a => (
-            <div style={`padding:7px 8px;background:${a.s==='critical'?'rgba(239,68,68,0.05)':a.s==='safe'?'rgba(16,185,129,0.05)':'transparent'};border:1px solid ${a.s==='critical'?'rgba(239,68,68,0.2)':a.s==='safe'?'rgba(16,185,129,0.15)':'#1F2937'};border-radius:5px;`}>
-              <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;">
-                <span style={`width:5px;height:5px;border-radius:50%;background:${a.s==='critical'?'#EF4444':a.s==='safe'?'#10B981':'#F59E0B'};flex-shrink:0;`}></span>
-                <span style="font-size:9px;font-weight:600;">{a.t}</span>
-                <span style="font-size:8px;color:#6B7280;margin-left:auto;">{a.time}</span>
-              </div>
-              <div style="font-size:8px;color:#6B7280;">{a.c}</div>
-            </div>
-          ))}
-        </div>
+    </section>
+    <section class="capabilities-section landing-section" id="features" aria-labelledby="features-title">
+      <h2 id="features-title">Less searching.<br /><em>More clarity.</em></h2>
+      <div class="capabilities-grid">
+        <a class="capability feature-monitor" href="/monitoring"><span class="feature-tag">Observe</span><h3>The whole site.<br />In one view.</h3><p>Explore camera health, detection overlays and the monitoring workflow.</p><span class="feature-link">Live Monitoring ↗</span></a>
+        <a class="capability feature-incidents" href="/incidents"><span class="feature-tag">Investigate</span><h3>Every event has<br />a <em>story.</em></h3><p>Filter incidents, review evidence and keep human verification visible.</p><span class="feature-link">Incidents ↗</span></a>
+        <a class="capability feature-research" href="/research"><span class="feature-tag">Understand / TinyFish</span><h3>Bring the web<br />into the workflow.</h3><p>Read official safety guidance with a web agent. Track progress and inspect its source.</p><span class="feature-link">Safety research ↗</span></a>
+        <a class="capability feature-zones" href="/zones"><span class="feature-tag">Configure</span><h3>Draw the line.<br /><em>Set the rule.</em></h3><p>Explore restricted areas, camera zones and configurable safety conditions.</p><span class="feature-link">Safety Zones ↗</span></a>
       </div>
-    </div>
-
-    <!-- Screenshot caption -->
-    <div style="
-      position:absolute;bottom:12px;right:16px;
-      font-size:10px;color:#4B5563;font-style:italic;
-    ">
-      SiteSage Command Center — Interactive Demo
-    </div>
-  </div>
-
-</section>
-
-<!-- ════════════════════════════════════════
-     HOW IT WORKS — Scroll Storytelling
-════════════════════════════════════════ -->
-<section id="how-it-works" style="padding:120px 24px;max-width:900px;margin:0 auto;">
-  <div style="text-align:center;margin-bottom:80px;">
-    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3B82F6;margin-bottom:12px;">
-      The Platform
-    </div>
-    <h2 style="font-family:'Manrope',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:16px;">
-      From camera to intelligence<br/>in real time.
-    </h2>
-    <p style="font-size:1rem;color:#9CA3AF;line-height:1.7;max-width:520px;margin:0 auto;">
-      SiteSage doesn't require new infrastructure. Connect your existing cameras.
-      The AI does the rest.
-    </p>
-  </div>
-
-  <div style="display:flex;flex-direction:column;gap:0;">
-    {[
-      {
-        step: '01',
-        title: 'Your cameras already see the site.',
-        desc: 'Connect any RTSP-compatible camera. No hardware changes. No installation disruption. SiteSage integrates with your existing CCTV infrastructure in minutes.',
-        accent: '#3B82F6',
-        icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`,
-      },
-      {
-        step: '02',
-        title: 'SiteSage understands what they see.',
-        desc: 'Computer vision AI processes every frame. Workers, PPE, equipment, restricted zones — all tracked in real time with confidence scoring. No manual tagging required.',
-        accent: '#06B6D4',
-        icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58"/></svg>`,
-      },
-      {
-        step: '03',
-        title: 'Risk becomes a verifiable event.',
-        desc: 'When a safety rule is violated, an incident is created — with camera frame evidence, AI confidence, location, timestamp, and rule context. Nothing is anonymous.',
-        accent: '#EF4444',
-        icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-      },
-      {
-        step: '04',
-        title: 'An event becomes a decision.',
-        desc: 'Supervisors receive real-time alerts with full context. Acknowledge, assign, escalate, or resolve — without leaving the interface. Every action is logged for audit.',
-        accent: '#F59E0B',
-        icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15.1"/><path d="M5 21H3a2 2 0 0 1-2-2v-3"/><line x1="4" y1="4" x2="20" y2="20"/></svg>`,
-      },
-      {
-        step: '05',
-        title: 'Every event becomes intelligence.',
-        desc: 'Over time, SiteSage builds a safety intelligence layer: compliance trends, incident heatmaps, camera health, high-risk zones, and actionable reporting for EHS managers.',
-        accent: '#10B981',
-        icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
-      },
-    ].map((item, i) => (
-      <div style={`display:flex;gap:32px;align-items:flex-start;padding:40px 0;${i < 4 ? 'border-bottom:1px solid rgba(255,255,255,0.06);' : ''}`} class="story-step">
-        <div style={`flex-shrink:0;width:64px;height:64px;border-radius:16px;background:${item.accent}12;border:1px solid ${item.accent}30;display:flex;align-items:center;justify-content:center;color:${item.accent};`}
-          set:html={item.icon}>
-        </div>
-        <div style="flex:1;">
-          <div style={`font-family:'JetBrains Mono',monospace;font-size:0.6875rem;letter-spacing:0.1em;color:${item.accent};margin-bottom:10px;`}>{item.step}</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-size:1.375rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;">{item.title}</h3>
-          <p style="font-size:0.9375rem;color:#9CA3AF;line-height:1.7;">{item.desc}</p>
-        </div>
+    </section>
+    <section class="trust-section landing-section" id="trust" aria-labelledby="trust-title">
+      <div class="trust-statement"><h2 id="trust-title">Technology sees.<br /><em>Your team decides.</em></h2><p>Assist trained personnel, keep critical decisions human, and measure performance before making claims.</p></div>
+      <div class="trust-details"><article><h3>Edge-first by design</h3><p>The proposed architecture processes video near the site. Camera feeds and worker identities are not sent to the TinyFish research agent.</p></article><article><h3>Evidence before action</h3><p>Detections flag possible events. Authorized personnel review them before deciding what happened.</p></article><article><h3>A prototype you can inspect</h3><p>Camera scenes and operational metrics are simulated. Real-world accuracy, latency and field robustness still need validation.</p></article></div>
+    </section>
+    <section class="closing-section kinetic-finale" aria-labelledby="finale-title">
+      <div class="finale-header"><h2 id="finale-title">Safety is<br /><em>in your hands.</em></h2><a class="landing-cta" href="/dashboard">Enter Platform <span aria-hidden="true">↗</span></a></div>
+      <button class="btn btn-ghost physics-enable" id="physics-enable" hidden>Play letter animation ↗</button>
+      <div class="physics-stage" id="physics-stage" role="region" tabindex="0" aria-label="Interactive SiteSage letters" aria-describedby="physics-help">
+        <div class="physics-letters" aria-hidden="true">{'SITESAGE'.split('').map((letter, index) => <span class="physics-letter" data-letter={index}>{letter}</span>)}</div>
+        <div class="physics-floor" aria-hidden="true"></div>
+        <div class="physics-controls"><p id="physics-help">Letters fall from above. Scroll inside for more. Grab and drag to play.</p><div><button id="physics-stir" class="btn btn-ghost">Stir letters ↗</button><button id="physics-reset" class="btn btn-ghost">Drop again ↻</button></div></div>
       </div>
-    ))}
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════
-     FEATURES GRID
-════════════════════════════════════════ -->
-<section id="features" style="padding:100px 24px;background:rgba(17,24,39,0.5);border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">
-  <div style="max-width:1140px;margin:0 auto;">
-    <div style="text-align:center;margin-bottom:64px;">
-      <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3B82F6;margin-bottom:12px;">Capabilities</div>
-      <h2 style="font-family:'Manrope',sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;letter-spacing:-0.03em;">
-        Built for the construction environment.
-      </h2>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
-      {[
-        { icon:'shield',   title:'PPE Detection',           desc:'Hard hat, vest, gloves, boots, harness — detected per-person, per-frame.',          accent:'#10B981' },
-        { icon:'hexagon',  title:'Geofence Zones',          desc:'Draw restricted areas on any camera. Automatic breach detection with audit trail.', accent:'#EF4444' },
-        { icon:'zap',      title:'< 30ms Detection',        desc:'Real-time inference. Events reach supervisors before violations escalate.',          accent:'#3B82F6' },
-        { icon:'file',     title:'Compliance Reports',      desc:'Daily shift summaries, OSHA-aligned exports, and regulatory documentation.',        accent:'#F59E0B' },
-        { icon:'map',      title:'Spatial Intelligence',    desc:'Zone risk mapping, tactical radar, and site-wide safety heatmaps.',                  accent:'#06B6D4' },
-        { icon:'lock',     title:'Privacy-First Design',    desc:'Workers are tracked for safety, not surveillance. Configurable data retention.',     accent:'#9CA3AF' },
-      ].map(f => (
-        <div style={`padding:24px;background:#111827;border:1px solid #1F2937;border-radius:10px;transition:border-color 0.15s;`}
-             onmouseover={`this.style.borderColor='${f.accent}30'`}
-             onmouseout="this.style.borderColor='#1F2937'">
-          <div style={`width:40px;height:40px;border-radius:10px;background:${f.accent}12;border:1px solid ${f.accent}25;display:flex;align-items:center;justify-content:center;margin-bottom:16px;`}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={f.accent} stroke-width="1.8">
-              {f.icon === 'shield'  && <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>}
-              {f.icon === 'hexagon' && <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>}
-              {f.icon === 'zap'     && <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>}
-              {f.icon === 'file'    && <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></>}
-              {f.icon === 'map'     && <><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></>}
-              {f.icon === 'lock'    && <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>}
-            </svg>
-          </div>
-          <h3 style="font-size:0.9375rem;font-weight:700;letter-spacing:-0.01em;margin-bottom:8px;">{f.title}</h3>
-          <p style="font-size:0.8125rem;color:#9CA3AF;line-height:1.6;">{f.desc}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════
-     TRUST & AI TRANSPARENCY
-════════════════════════════════════════ -->
-<section id="trust" style="padding:100px 24px;max-width:900px;margin:0 auto;text-align:center;">
-  <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3B82F6;margin-bottom:12px;">AI Transparency</div>
-  <h2 style="font-family:'Manrope',sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:16px;">
-    Safety intelligence.<br/>Not surveillance.
-  </h2>
-  <p style="font-size:1rem;color:#9CA3AF;line-height:1.7;max-width:520px;margin:0 auto 48px;">
-    SiteSage AI is a tool for safety, not employee monitoring. Every AI detection is labelled as such,
-    confidence is always shown, and no action is taken without human confirmation.
-  </p>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:left;">
-    {[
-      { badge:'AI DETECTED', badgeColor:'#F59E0B', badgeBg:'rgba(245,158,11,0.1)', badgeBorder:'rgba(245,158,11,0.25)', desc:'Every machine-generated detection is labelled. You always know when the AI is speaking.' },
-      { badge:'REVIEW REQUIRED', badgeColor:'#3B82F6', badgeBg:'rgba(59,130,246,0.1)', badgeBorder:'rgba(59,130,246,0.25)', desc:'High-confidence detections still surface for supervisor review before incident creation.' },
-      { badge:'HUMAN CONFIRMED', badgeColor:'#10B981', badgeBg:'rgba(16,185,129,0.1)', badgeBorder:'rgba(16,185,129,0.25)', desc:'Incidents are marked confirmed only when a human supervisor validates the AI finding.' },
-    ].map(t => (
-      <div style="padding:20px;background:#111827;border:1px solid #1F2937;border-radius:10px;">
-        <div style={`display:inline-flex;align-items:center;padding:3px 10px;border-radius:4px;background:${t.badgeBg};border:1px solid ${t.badgeBorder};font-size:0.6875rem;font-weight:700;letter-spacing:0.08em;color:${t.badgeColor};margin-bottom:12px;`}>
-          {t.badge}
-        </div>
-        <p style="font-size:0.8125rem;color:#9CA3AF;line-height:1.6;">{t.desc}</p>
-      </div>
-    ))}
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════
-     FINAL CTA
-════════════════════════════════════════ -->
-<section style="
-  padding:100px 24px;text-align:center;
-  background:linear-gradient(to bottom,rgba(37,99,235,0.04) 0%,rgba(11,18,32,0) 100%);
-  border-top:1px solid rgba(59,130,246,0.1);
-">
-  <h2 style="font-family:'Manrope',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.035em;margin-bottom:16px;">
-    Your cameras are already<br/>watching the site.
-  </h2>
-  <p style="font-size:1.0625rem;color:#9CA3AF;margin-bottom:40px;line-height:1.7;">
-    Make them intelligent.
-  </p>
-  <a href="/dashboard" style="
-    display:inline-flex;align-items:center;gap:10px;
-    padding:15px 36px;
-    background:#2563EB;color:#fff;
-    border-radius:8px;font-size:1rem;font-weight:700;
-    text-decoration:none;letter-spacing:-0.01em;
-    box-shadow:0 4px 32px rgba(37,99,235,0.4);
-    transition:all 0.15s;
-  " onmouseover="this.style.background='#3B82F6'" onmouseout="this.style.background='#2563EB'">
-    Explore the Platform
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-  </a>
-</section>
-
-<!-- Footer -->
-<footer style="
-  border-top:1px solid rgba(255,255,255,0.06);
-  padding:32px 48px;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:16px;
-">
-  <div style="display:flex;align-items:center;gap:10px;">
-    <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-      <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" fill="#111827" stroke="#2563EB" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="4" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="1.5" fill="#EF4444"/>
-    </svg>
-    <span style="font-size:0.875rem;font-weight:700;color:#6B7280;">SiteSage</span>
-  </div>
-  <p style="font-size:0.75rem;color:#4B5563;">
-    Safety intelligence for construction. AI-powered. Human-confirmed. © 2026
-  </p>
-  <div style="display:flex;gap:24px;">
-    {['Privacy','Terms','Security'].map(link => (
-      <a href="#" style="font-size:0.75rem;color:#4B5563;text-decoration:none;">{link}</a>
-    ))}
-  </div>
-</footer>
-
-<style>
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
-  }
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes hero-scan {
-    from { transform: translateX(-50%) rotate(0deg); }
-    to   { transform: translateX(-50%) rotate(360deg); }
-  }
-
-  .story-step {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-  }
-  .story-step.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
-
-<script>
-  // Scroll storytelling — reveal steps on scroll
-  const steps = document.querySelectorAll('.story-step');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-  steps.forEach(step => observer.observe(step));
-
-  // Sticky nav background
-  window.addEventListener('scroll', () => {
-    const nav = document.getElementById('landing-nav');
-    if (nav) {
-      nav.style.background = window.scrollY > 40
-        ? 'rgba(11,18,32,0.97)'
-        : 'rgba(11,18,32,0.85)';
-    }
-  });
-</script>
-
+    </section>
+  </main>
+  <footer class="landing-footer"><a class="brand" href="/">SiteSage</a><p>Construction safety. Human judgement.</p><a href="/research">Powered by TinyFish ↗</a></footer>
+  <script>
+    import { initLandingMotion } from '../lib/landing-motion';
+    initLandingMotion();
+  </script>
 </body>
 </html>

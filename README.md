@@ -4,7 +4,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Safety Standard](https://img.shields.io/badge/OSHA-29_CFR_1926-green.svg)](https://www.osha.gov)
 
-SiteSage is an industrial AI safety platform and real-time computer vision command center designed for high-risk construction sites. It ingests multi-camera RTSP feeds, executes real-time PPE and geofence inference, flags hazardous violations, and manages end-to-end incident investigation and OSHA 1926 compliance reporting.
+SiteSage is a construction safety UI prototype built around an edge-first AI concept. The current app simulates camera scenes, detections, operational metrics and incident workflows. Its TinyFish research workspace reads official safety sources through a live web agent. Production RTSP ingestion, computer vision accuracy and field performance remain to be validated.
+
+Read [prototype and TinyFish setup notes](docs/prototype-notes.md) for configuration, verification and HackIIITD submission context.
+
+The additional `/context` workspace attaches TinyFish Search weather sources and Fetch rule text to incident evidence. Original alerts appear immediately; cached context and human-reviewed escalation are saved locally in development or in PostgreSQL when configured. Native daily rule/advisory monitors and their webhook receiver are included; see the setup notes to register them. The existing `/research` Agent/SSE workflow remains available.
 
 ---
 
@@ -42,7 +46,7 @@ SiteSage is an industrial AI safety platform and real-time computer vision comma
 ## 🚀 Quick Start
 
 ### Prerequisites
-* **Node.js**: v18.0.0 or higher
+* **Node.js**: v22.12.0 or higher
 * **npm**: v9.0.0 or higher
 
 ### Installation
@@ -55,7 +59,7 @@ cd sitesage
 npm install
 
 # Start development server
-npm run dev
+npm run dev -- --background
 ```
 
 Navigate to `http://localhost:4321` in your browser.

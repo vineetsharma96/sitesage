@@ -19,7 +19,7 @@ const incidents = [
   { id:'INC-0239', type:'Torn High-Vis Vest Striping',severity:'medium',cam:'CAM-02', sector:'A', location:'Level 08 Scaffolding',time:'13:15:22',timeDisplay:'01:15 PM', worker:'Elena Chen',           badge:'#AC-0924', trade:'Lead Finisher • Apex',     confidence:87, status:'resolved',       assignee:'Ray Kowalski',    aiState:'confirmed' },
 ];
 
-const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+const countBy = (key: 'status' | 'severity', value: string) => incidents.filter(incident => incident[key] === value).length;
 const statusColor = (s: string) =>
   s === 'open' ? 'critical' : s === 'investigating' ? 'warning' : s === 'acknowledged' ? 'primary' : 'safe';
 const aiStateLabel = (s: string) =>
@@ -38,7 +38,7 @@ const aiStateColor = (s: string) =>
 <div class="page-header">
   <div>
     <h1 class="page-title">Incident Log</h1>
-    <p class="page-subtitle">AI-generated safety violation records with full evidence trail — 10 incidents shown</p>
+    <p class="page-subtitle">Review detections, inspect the evidence, and decide the next step. Simulated incident records.</p>
   </div>
   <div class="page-actions">
     <button class="btn btn-ghost" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
@@ -47,7 +47,7 @@ const aiStateColor = (s: string) =>
       </svg>
       Filter
     </button>
-    <button class="btn btn-primary">
+    <button class="btn btn-primary" id="export-incidents">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
@@ -59,13 +59,13 @@ const aiStateColor = (s: string) =>
 <!-- SUMMARY ROW -->
 <div class="ops-status-strip" role="status" aria-label="Incident summary">
   {[
-    { label:'Open',          count:3,  color:'var(--color-critical)' },
-    { label:'Investigating', count:1,  color:'var(--color-warning)' },
-    { label:'Acknowledged',  count:1,  color:'var(--color-primary-hover)' },
-    { label:'Resolved',      count:5,  color:'var(--color-safe)' },
-    { label:'Critical',      count:5,  color:'var(--color-critical)' },
-    { label:'High',          count:2,  color:'var(--color-warning)' },
-    { label:'Avg Confidence',count:'93%', color:'var(--color-cyan)' },
+    { label:'Open',          count:countBy('status', 'open'),  color:'var(--color-critical)' },
+    { label:'Investigating', count:countBy('status', 'investigating'),  color:'var(--color-warning)' },
+    { label:'Acknowledged',  count:countBy('status', 'acknowledged'),  color:'var(--color-primary-hover)' },
+    { label:'Resolved',      count:countBy('status', 'resolved'),  color:'var(--color-safe)' },
+    { label:'Critical',      count:countBy('severity', 'critical'),  color:'var(--color-critical)' },
+    { label:'High',          count:countBy('severity', 'high'),  color:'var(--color-warning)' },
+    { label:'Avg Confidence',count:`${(incidents.reduce((sum, inc) => sum + inc.confidence, 0) / incidents.length).toFixed(1)}%`, color:'var(--color-cyan)' },
   ].map(s => (
     <div class="ops-status-item">
       <div>
@@ -85,27 +85,28 @@ const aiStateColor = (s: string) =>
         { label:'Status',   options:['All','Open','Investigating','Acknowledged','Resolved'] },
         { label:'Camera',   options:['All','CAM-01','CAM-02','CAM-03','CAM-04','CAM-05','CAM-06'] },
         { label:'Sector',   options:['All','A','B','C','D','E'] },
-        { label:'Detection',options:['All','No Helmet','No Vest','Zone Breach','Proximity','No Gloves'] },
-        { label:'Assignee', options:['All','Unassigned','J. Reyes','R. Santos','M. Chen'] },
+        { label:'Detection',options:['All', ...new Set(incidents.map(inc => inc.type))] },
+        { label:'Assignee', options:['All', ...new Set(incidents.map(inc => inc.assignee))] },
       ].map(f => (
         <div>
           <label style="display:block;font-size:var(--text-xxs);font-weight:var(--weight-bold);letter-spacing:var(--tracking-technical);text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:5px;">
             {f.label}
           </label>
-          <select class="input" style="height:32px;font-size:var(--text-xs);" aria-label={`Filter by ${f.label}`}>
+          <select class="input" data-filter={f.label.toLowerCase()} style="height:36px;font-size:var(--text-xs);" aria-label={`Filter by ${f.label}`}>
             {f.options.map(o => <option>{o}</option>)}
           </select>
         </div>
       ))}
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;">
-      <button class="btn btn-ghost btn-sm">Reset Filters</button>
-      <button class="btn btn-primary btn-sm">Apply</button>
+      <button class="btn btn-ghost btn-sm" id="reset-filters">Reset Filters</button>
+      <button class="btn btn-primary btn-sm" id="apply-filters">Apply</button>
     </div>
   </div>
 </div>
 
 <!-- INCIDENTS TABLE -->
+<div class="research-callout"><div><h2>Understand the rule behind the risk.</h2><p>Use TinyFish to read official safety guidance alongside your incident review.</p></div><a href="/research" class="btn btn-ghost">Safety research ↗</a></div>
 <div class="card" style="overflow:hidden;">
   <!-- Table search bar -->
   <div class="panel-header">
@@ -118,7 +119,7 @@ const aiStateColor = (s: string) =>
         <svg class="input-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input class="input" type="search" placeholder="Search incidents..." style="font-size:var(--text-xs);height:28px;" aria-label="Search incidents" id="incident-search"/>
       </div>
-      <span class="tech-label" style="white-space:nowrap;">10 records</span>
+      <span class="tech-label" style="white-space:nowrap;" id="incident-count" aria-live="polite">10 records</span>
     </div>
   </div>
 
@@ -149,6 +150,7 @@ const aiStateColor = (s: string) =>
       <tbody id="incidents-tbody">
         {incidents.map(inc => (
           <tr class="incident-row"
+              data-record={JSON.stringify(inc)}
               data-severity={inc.severity}
               data-status={inc.status}
               style="cursor:pointer;"
@@ -286,6 +288,7 @@ const aiStateColor = (s: string) =>
       </tbody>
     </table>
   </div>
+  <div class="empty-state" id="incident-empty" hidden><h2>No matching incidents</h2><p>Try another search or reset the filters.</p></div>
 </div>
 
 <style>
@@ -307,21 +310,53 @@ const aiStateColor = (s: string) =>
     filterToggle.setAttribute('aria-expanded', String(!isOpen));
   });
 
-  // Live search filter
+  // Search and the selected filters compose, so applying one never clears the other.
   const searchInput = document.getElementById('incident-search') as HTMLInputElement;
-  const rows = document.querySelectorAll('.incident-row');
-  searchInput?.addEventListener('input', () => {
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('.incident-row'));
+  const selects = Array.from(document.querySelectorAll<HTMLSelectElement>('[data-filter]'));
+  let activeFilters: Record<string, string> = {};
+  function applyFilters() {
     const q = searchInput.value.toLowerCase();
+    let count = 0;
     rows.forEach(row => {
       const text = row.textContent?.toLowerCase() ?? '';
-      (row as HTMLElement).style.display = text.includes(q) ? '' : 'none';
+      const record = JSON.parse(row.dataset.record!);
+      const matches = text.includes(q) && Object.entries(activeFilters).every(([key, value]) => {
+        const field = key === 'camera' ? 'cam' : key === 'detection' ? 'type' : key;
+        return value === 'All' || String(record[field]).toLowerCase() === value.toLowerCase();
+      });
+      row.style.display = matches ? '' : 'none';
+      if (matches) count++;
     });
+    document.getElementById('incident-count')!.textContent = `${count} ${count === 1 ? 'record' : 'records'}`;
+    document.getElementById('incident-empty')!.hidden = count !== 0;
+    (document.getElementById('export-incidents') as HTMLButtonElement).disabled = count === 0;
+  }
+  searchInput.addEventListener('input', applyFilters);
+  document.getElementById('apply-filters')!.addEventListener('click', () => {
+    activeFilters = Object.fromEntries(selects.map(select => [select.dataset.filter!, select.value]));
+    applyFilters();
+    filterToggle.textContent = `Filter (${Object.values(activeFilters).filter(v => v !== 'All').length})`;
+  });
+  document.getElementById('reset-filters')!.addEventListener('click', () => {
+    selects.forEach(select => select.value = 'All'); activeFilters = {}; searchInput.value = '';
+    applyFilters(); filterToggle.textContent = 'Filter';
+  });
+  document.getElementById('export-incidents')!.addEventListener('click', () => {
+    const fields = ['id', 'severity', 'type', 'worker', 'location', 'cam', 'time', 'confidence', 'status', 'assignee'];
+    const escape = (value: unknown) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const records = rows.filter(row => row.style.display !== 'none').map(row => JSON.parse(row.dataset.record!));
+    const csv = [fields.join(','), ...records.map(record => fields.map(key => escape(record[key])).join(','))].join('\r\n');
+    const url = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a'); link.href = url; link.download = 'sitesage-incidents.csv'; link.click(); URL.revokeObjectURL(url);
   });
 
   // Keyboard: Enter on row opens drawer
   rows.forEach(row => {
     row.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        if (e.target !== row) return;
+        e.preventDefault();
         (row as HTMLElement).click();
       }
     });

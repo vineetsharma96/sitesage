@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { RESEARCH_TOPICS } from '../lib/research-topics.js';
+const requested = Astro.url.searchParams.get('topic') || 'ppe';
+const selected = Object.hasOwn(RESEARCH_TOPICS, requested) ? requested : 'ppe';
+const incident = (Astro.url.searchParams.get('incident') || '').slice(0, 40);
+---
+<Layout title="Safety research" breadcrumb={['Intelligence', 'Safety research']} activePage="research">
+  <div class="page-header"><div><h1 class="page-title">Research with <em>TinyFish.</em></h1><p class="page-subtitle">Official guidance, readable context, and questions for your safety team.</p></div><span class="connection-chip" id="research-connection" role="status">Checking connection…</span></div>
+  {incident && <p class="incident-context">Opened from {incident}. <a href="/incidents">Back to incident log ↗</a></p>}
+  <p class="incident-context">Need weather and incident sources? <a href="/context">Open incident context ↗</a></p>
+  <div class="research-layout">
+    <section class="research-controls card" aria-labelledby="research-input-title">
+      <div class="research-eyebrow">Web agent / official sources</div>
+      <h2 id="research-input-title">What needs<br />a closer look?</h2>
+      <p class="research-helper">Select a safety topic. TinyFish reads the linked standard and returns a brief for human review.</p>
+      <form id="research-form">
+        <fieldset><legend>Safety topic</legend><div class="topic-options">
+          {Object.entries(RESEARCH_TOPICS).map(([key, topic]) => <label class="topic-option"><input type="radio" name="topic" value={key} checked={key === selected} /><span><strong>{topic.label}</strong><small>{topic.title}</small></span><span aria-hidden="true">↗</span></label>)}
+        </div></fieldset>
+        <div class="source-panel"><span>Source / US OSHA</span><a id="research-source" href={RESEARCH_TOPICS[selected].url} target="_blank" rel="noopener noreferrer">Read the original standard ↗</a></div>
+        <button type="submit" class="btn btn-primary research-run" id="research-run">Run live research ↗</button>
+        <button type="button" class="btn btn-ghost research-run" id="research-sample">Preview sample brief</button>
+      </form>
+      <p class="research-footnote">Live research uses TinyFish credits. Only the selected public topic is sent; no video, worker data or incident IDs.</p>
+    </section>
+    <section class="research-output card" aria-labelledby="brief-heading" aria-busy="false" id="research-output">
+      <div class="research-output-head"><h2 id="brief-heading">Your research brief</h2><span class="brief-mode" id="brief-mode">Ready when you are</span></div>
+      <div class="research-idle" id="research-idle"><div class="research-glyph" aria-hidden="true">↗</div><h3>Evidence needs context.</h3><p>Run a web agent against an official standard, or preview a clearly marked sample to explore the workflow.</p><div class="research-flow"><span>Read source</span><span>→</span><span>Extract context</span><span>→</span><span>Human review</span></div></div>
+      <div class="research-progress" id="research-progress" hidden><h3>Reading the source…</h3><p id="research-progress-message" role="status" aria-live="polite">Starting the web agent.</p><ol id="research-steps"></ol></div>
+      <div class="research-error" id="research-error" role="alert" hidden></div>
+      <article id="research-result" hidden><h3 id="result-title"></h3><p id="result-summary"></p><div class="brief-section"><h4>What the source says</h4><ul id="result-requirements"></ul></div><div class="brief-section"><h4>Questions for human review</h4><ul id="result-questions"></ul></div><p class="result-limitations" id="result-limitations"></p><div class="result-actions"><a class="btn btn-ghost" id="result-source" target="_blank" rel="noopener noreferrer">Inspect source ↗</a><button class="btn btn-ghost" id="brief-download">Download brief</button></div></article>
+      <div class="research-scope">US OSHA reference material. Verify local requirements and site conditions before applying any guidance in India. An agent brief does not determine compliance.</div>
+    </section>
+  </div>
+  <div class="research-callout"><div><h2>The next step is a human decision.</h2><p>Use this context alongside evidence, site rules and trained judgement.</p></div><a href="/incidents" class="btn btn-ghost">Review incidents ↗</a></div>
+</Layout>
+<style>
+  .page-title em { font-family: var(--font-editorial); font-weight: 400; color: var(--color-primary-hover); }
+  .connection-chip, .brief-mode { font-family: var(--font-mono); font-size: .65rem; color: var(--color-text-secondary); }
+  .connection-chip { padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 6px; }
+  .incident-context { font-size: .8rem; color: var(--color-text-secondary); }
+  .incident-context a { margin-left: 16px; color: var(--color-primary-hover); }
+  .research-layout { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(0, 1.4fr); gap: 24px; }
+  .research-controls { padding: 28px; }
+  .research-eyebrow { font-family: var(--font-mono); font-size: .65rem; color: var(--color-primary-hover); margin-bottom: 24px; }
+  .research-controls h2 { font-size: 2rem; font-weight: 500; letter-spacing: -.05em; line-height: 1.1; }
+  .research-helper { margin: 20px 0 28px; font-size: .8rem; line-height: 1.75; color: var(--color-text-secondary); }
+  legend { font-size: .75rem; margin-bottom: 12px; }
+  .topic-options { display: grid; gap: 10px; }
+  .topic-option { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px; cursor: pointer; }
+  .topic-option:has(:checked) { background: var(--color-primary-bg); border-color: var(--color-primary-hover); }
+  .topic-option input { accent-color: var(--color-primary); width: 16px; height: 16px; flex-shrink: 0; }
+  .topic-option > span:last-child { margin-left: auto; color: var(--color-primary-hover); }
+  .topic-option strong { display: block; font-size: .8rem; font-weight: 500; }
+  .topic-option small { display: block; font-size: .7rem; color: var(--color-text-secondary); margin-top: 5px; }
+  .source-panel { padding-block: 22px; font-size: .7rem; }
+  .source-panel span { display: block; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .source-panel a { color: var(--color-primary-hover); }
+  .research-run { width: 100%; margin-bottom: 10px; min-height: 44px; }
+  .research-footnote { color: var(--color-text-tertiary); font-size: .7rem; line-height: 1.75; margin-top: 14px; }
+  .research-output { display: flex; flex-direction: column; min-height: 600px; overflow: hidden; }
+  .research-output-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 28px; border-bottom: 1px solid var(--color-border); }
+  .research-output-head h2 { font-size: .85rem; font-weight: 500; }
+  .research-idle { margin: auto; text-align: center; max-width: 420px; padding: 40px 28px; }
+  .research-glyph { font-size: 4rem; color: var(--color-primary-hover); margin-bottom: 20px; line-height: 1; }
+  .research-idle h3 { font-size: 1.5rem; font-weight: 500; letter-spacing: -.04em; }
+  .research-idle p { color: var(--color-text-secondary); font-size: .8rem; line-height: 1.75; margin-top: 16px; }
+  .research-flow { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 32px; font-size: .65rem; color: var(--color-text-tertiary); }
+  .research-scope { margin-top: auto; padding: 20px 28px; background: var(--color-bg); border-top: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: .7rem; line-height: 1.75; }
+  #research-result, .research-progress { padding: 28px; }
+  #result-title { font-size: 1.7rem; font-weight: 500; letter-spacing: -.04em; margin-bottom: 18px; }
+  #result-summary, .brief-section :global(li), .result-limitations { font-size: .85rem; line-height: 1.8; color: var(--color-text-secondary); }
+  .brief-section { margin-top: 28px; }
+  .brief-section h4 { font-size: .8rem; margin-bottom: 14px; }
+  .brief-section ul { list-style: disc; padding-left: 20px; }
+  .brief-section :global(li + li) { margin-top: 10px; }
+  .result-limitations { margin-top: 24px; padding: 16px; background: var(--color-surface-2); border-radius: 8px; }
+  .result-actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .research-progress h3 { font-size: 1.2rem; font-weight: 500; }
+  .research-progress p { font-size: .8rem; line-height: 1.7; color: var(--color-text-secondary); margin-top: 12px; }
+  #research-steps { margin-top: 24px; font-family: var(--font-mono); font-size: .7rem; line-height: 1.8; color: var(--color-primary-hover); }
+  #research-steps :global(li) { padding: 10px 0; border-bottom: 1px solid var(--color-border); }
+  .research-error { margin: 24px 28px; padding: 20px; border: 1px solid var(--color-critical); border-radius: 8px; font-size: .8rem; line-height: 1.7; }
+  [hidden] { display: none !important; }
+  @media (max-width: 1050px) { .research-layout { grid-template-columns: 1fr; } .research-output { min-height: 440px; } }
+  @media (max-width: 600px) { .research-controls, #research-result, .research-progress { padding: 22px; } .research-output-head { padding: 20px; flex-wrap: wrap; } }
+</style>
+<script>
+  import { RESEARCH_TOPICS } from '../lib/research-topics.js';
+  import { consumeSSE } from '../lib/sse.js';
+  const form = document.getElementById('research-form') as HTMLFormElement;
+  const run = document.getElementById('research-run') as HTMLButtonElement;
+  const sample = document.getElementById('research-sample') as HTMLButtonElement;
+  const output = document.getElementById('research-output')!;
+  const idle = document.getElementById('research-idle')!;
+  const progress = document.getElementById('research-progress')!;
+  const errorBox = document.getElementById('research-error')!;
+  const result = document.getElementById('research-result')!;
+  const mode = document.getElementById('brief-mode')!;
+  const steps = document.getElementById('research-steps')!;
+  const source = document.getElementById('research-source') as HTMLAnchorElement;
+  let lastBrief: Record<string, any> | null = null;
+  let busy = false;
+  const topicKey = () => new FormData(form).get('topic') as keyof typeof RESEARCH_TOPICS;
+  form.addEventListener('change', () => { source.href = RESEARCH_TOPICS[topicKey()].url; });
+  fetch('/api/tinyfish').then(r => r.json()).then(data => {
+    document.getElementById('research-connection')!.textContent = data.configured ? 'TinyFish / key configured' : 'Sample mode / key needed for live';
+  }).catch(() => { document.getElementById('research-connection')!.textContent = 'Connection unavailable'; });
+
+  function text(id: string, value: unknown) { document.getElementById(id)!.textContent = typeof value === 'string' ? value : ''; }
+  function list(id: string, value: unknown) {
+    const target = document.getElementById(id)!;
+    target.replaceChildren();
+    if (Array.isArray(value)) value.slice(0, 8).forEach(item => { if (typeof item === 'string') { const li = document.createElement('li'); li.textContent = item; target.append(li); } });
+  }
+  function showBrief(payload: any, topic: typeof RESEARCH_TOPICS.ppe, sampleMode = false) {
+    if (typeof payload === 'string') { try { payload = JSON.parse(payload); } catch { throw new Error('The agent returned an unreadable brief. Open the source to review it directly.'); } }
+    if (!payload || typeof payload.summary !== 'string') throw new Error('The agent did not return the expected brief. Review the original source.');
+    lastBrief = { ...payload, sourceUrl: topic.url, mode: sampleMode ? 'sample' : 'live', retrievedAt: new Date().toISOString() };
+    text('result-title', payload.title || topic.title);
+    text('result-summary', payload.summary);
+    list('result-requirements', payload.requirements);
+    list('result-questions', payload.reviewQuestions);
+    text('result-limitations', payload.limitations || 'Verify this interpretation against the original source and local requirements.');
+    (document.getElementById('result-source') as HTMLAnchorElement).href = topic.url;
+    idle.hidden = true; progress.hidden = true; errorBox.hidden = true; result.hidden = false;
+    mode.textContent = sampleMode ? 'Sample / not a live agent result' : 'Live / review required';
+  }
+  sample.addEventListener('click', () => {
+    const topic = RESEARCH_TOPICS[topicKey()];
+    showBrief({ title: `${topic.title}: sample brief`, summary: 'This is a prepared example of the research workflow, not a live TinyFish response. Open the linked standard to inspect the evidence.', requirements: ['A live run will extract source-specific requirements and paragraph references here.'], reviewQuestions: ['Does this source apply to the project jurisdiction?', 'What site conditions and evidence should a safety officer verify?'], limitations: 'Sample content demonstrates the interface only. Run live research for source-derived findings.' }, topic, true);
+  });
+  form.addEventListener('submit', async event => {
+    event.preventDefault(); if (busy) return;
+    busy = true; run.disabled = true; sample.disabled = true;
+    form.querySelectorAll<HTMLInputElement>('input').forEach(input => input.disabled = true);
+    // Read the checked value directly because disabled radios are omitted by FormData.
+    const key = form.querySelector<HTMLInputElement>('input:checked')!.value as keyof typeof RESEARCH_TOPICS;
+    const topic = RESEARCH_TOPICS[key];
+    idle.hidden = true; result.hidden = true; errorBox.hidden = true; progress.hidden = false;
+    output.setAttribute('aria-busy', 'true'); mode.textContent = 'Live / running'; steps.replaceChildren();
+    text('research-progress-message', 'Starting the web agent. This can take a minute or two.');
+    let completed = false;
+    try {
+      const response = await fetch('/api/tinyfish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic: key }) });
+      if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'Research could not start.'); }
+      if (!response.body) throw new Error('Research returned no stream.');
+      await consumeSSE(response.body, event => {
+        if (event.type === 'PROGRESS' || event.type === 'STARTED') {
+          const message = event.purpose || event.message || 'TinyFish started reading the source.';
+          text('research-progress-message', message);
+          const li = document.createElement('li'); li.textContent = message; steps.append(li);
+          if (steps.children.length > 6) steps.firstElementChild?.remove();
+        }
+        if (event.type === 'ERROR' || event.status === 'FAILED' || event.status === 'CANCELLED') throw new Error('TinyFish could not finish the run. Check your TinyFish dashboard before retrying.');
+        if (event.type === 'COMPLETE') {
+          if (event.status && event.status !== 'COMPLETED') throw new Error('The agent run did not complete successfully.');
+          showBrief(event.result ?? event.resultJson, topic); completed = true;
+        }
+      });
+      if (!completed) throw new Error('The connection ended before a completed brief arrived. Check the TinyFish run before retrying.');
+    } catch (error) {
+      progress.hidden = true; errorBox.hidden = false; errorBox.textContent = (error as Error).message;
+      mode.textContent = 'Research unavailable';
+    } finally {
+      busy = false; run.disabled = false; sample.disabled = false;
+      form.querySelectorAll<HTMLInputElement>('input').forEach(input => input.disabled = false);
+      output.setAttribute('aria-busy', 'false');
+    }
+  });
+  document.getElementById('brief-download')!.addEventListener('click', () => {
+    if (!lastBrief) return;
+    const blob = new Blob([JSON.stringify(lastBrief, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'sitesage-safety-brief.json'; a.click(); URL.revokeObjectURL(url);
+  });
+</script>
